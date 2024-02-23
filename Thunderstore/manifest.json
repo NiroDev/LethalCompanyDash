@@ -1,0 +1,9 @@
+{
+    "name": "Dash",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/MehimoNemo/LethalCompanyShrinkRay",
+    "description": "A simple mod that lets you do a dash when double-tapping!",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.2100"
+    ]
+}

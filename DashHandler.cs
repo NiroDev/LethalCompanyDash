@@ -17,14 +17,6 @@ namespace Dash
             Right
         }
 
-        internal Dictionary<KeyControl, Direction> keyDirectionMap = new Dictionary<KeyControl, Direction>
-        {
-            { Keyboard.current.wKey, Direction.Forward },
-            { Keyboard.current.sKey, Direction.Backward },
-            { Keyboard.current.aKey, Direction.Left },
-            { Keyboard.current.dKey, Direction.Right }
-        };
-
         internal Dictionary<Direction, int> dashProgressMap = new Dictionary<Direction, int>
         {
             { Direction.Forward, 0 },
@@ -59,12 +51,12 @@ namespace Dash
         internal void HandleDashInDirection(Direction direction)
         {
             var currentTime = Time.time;
-            if (currentTime - lastDashedAt < Config.Instance.Cooldown)
+            if (currentTime - lastDashedAt < Config.Instance.Cooldown.Value)
                 return;
 
             var diff = currentTime - lastKeyChangeMap[direction];
             lastKeyChangeMap[direction] = currentTime;
-            if (diff < Config.Instance.Precision)
+            if (diff < Config.Instance.Precision.Value)
                 dashProgressMap[direction]++;
             else
             {
@@ -81,7 +73,7 @@ namespace Dash
             if (StartOfRound.Instance.localPlayerController == null)
                 return;
 
-            if (StartOfRound.Instance.localPlayerController.sprintMeter < Config.Instance.StaminaCost)
+            if (StartOfRound.Instance.localPlayerController.sprintMeter < Config.Instance.StaminaCost.Value)
                 return;
 
             Vector3 directionalVector = StartOfRound.Instance.localPlayerController.gameplayCamera.transform.forward;
@@ -102,8 +94,8 @@ namespace Dash
             }
 
             // Perform dash
-            DashRoutine.StartRoutine(StartOfRound.Instance.localPlayerController, directionalVector, Config.Instance.Power, Config.Instance.Speed);
-            StartOfRound.Instance.localPlayerController.sprintMeter = Mathf.Clamp(StartOfRound.Instance.localPlayerController.sprintMeter - Config.Instance.StaminaCost, 0f, 1f);
+            DashRoutine.StartRoutine(StartOfRound.Instance.localPlayerController, directionalVector, Config.Instance.Power.Value, Config.Instance.Speed.Value);
+            StartOfRound.Instance.localPlayerController.sprintMeter = Mathf.Clamp(StartOfRound.Instance.localPlayerController.sprintMeter - Config.Instance.StaminaCost.Value, 0f, 1f);
             lastDashedAt = Time.time;
 
             dashProgressMap[direction] = 0;

@@ -8,9 +8,9 @@ namespace Dash
     [BepInPlugin(modGUID, modName, modVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        private const string modGUID = "Niro.Dash";
-        private const string modName = "Dash";
-        private const string modVersion = "1.0.0";
+        public const string modGUID = "Niro.Dash";
+        public const string modName = "Dash";
+        public const string modVersion = "1.0.3";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
@@ -31,6 +31,7 @@ namespace Dash
 
             mls.LogMessage("Plugin " + modName + " loaded!");
 
+            harmony.PatchAll(typeof(Config.SyncLimitations));
             harmony.PatchAll(typeof(PlayerControllerBPatch));
         }
     }

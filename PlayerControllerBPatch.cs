@@ -18,6 +18,16 @@ namespace Dash
             if (StartOfRound.Instance.localPlayerController.playerClientId != __instance.playerClientId)
                 return; // Not us
 
+            if (!Config.Instance.Enabled.Value)
+                return;
+
+            if (Config.Instance.ToSize.Value > 0f)
+            {
+                var playerSize = StartOfRound.Instance.localPlayerController.gameObject.transform.localScale.x;
+                if (playerSize < Config.Instance.FromSize.Value || playerSize > Config.Instance.ToSize.Value)
+                    return;
+            }
+
             dashHandler.OnUpdate();
         }
     }

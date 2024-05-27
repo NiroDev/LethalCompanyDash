@@ -6,11 +6,12 @@ using HarmonyLib;
 namespace Dash
 {
     [BepInPlugin(modGUID, modName, modVersion)]
+    [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         public const string modGUID = "Niro.Dash";
         public const string modName = "Dash";
-        public const string modVersion = "1.0.3";
+        public const string modVersion = "1.1.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
@@ -18,9 +19,11 @@ namespace Dash
 
         static internal ManualLogSource mls;
 
+        static internal DashHandler dashHandler = new DashHandler();
+
         public static ConfigFile BepInExConfig() { return instance.Config; }
 
-        void Awake()
+        public void Awake()
         {
             // entry point when mod load
             if ( instance == null)

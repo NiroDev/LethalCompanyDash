@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
 namespace Dash
 {
     internal class DashHandler
     {
         public float lastDashedAt = 0f;
+
+        private bool DashKeyRegistered = false;
 
         public enum Direction
         {
@@ -33,8 +34,30 @@ namespace Dash
             { Direction.Right, 0f }
         };
 
+        public void RegisterDashKey()
+        {
+            if(DashKeyRegistered)
+            {
+                if (!InputUtilsCompat.Enabled || !InputUtilsCompat.UseDashKey)
+                {
+                    InputUtilsCompat.DashKey.performed -= OnDashKeyPressed;
+                    DashKeyRegistered = false;
+                }
+            }
+            else
+            {
+                if (InputUtilsCompat.Enabled && InputUtilsCompat.UseDashKey)
+                {
+                    InputUtilsCompat.DashKey.performed += OnDashKeyPressed;
+                    DashKeyRegistered = true;
+                }
+            }
+        }
+
         internal void OnUpdate()
         {
+            if (!FulfillsDashConditions()) return;
+
             if (Keyboard.current.wKey.wasPressedThisFrame || Keyboard.current.wKey.wasReleasedThisFrame)
                 HandleDashInDirection(Direction.Forward);
 
@@ -48,14 +71,41 @@ namespace Dash
                 HandleDashInDirection(Direction.Right);
         }
 
+        internal void OnDashKeyPressed(InputAction.CallbackContext dashContext)
+        {
+            if (!FulfillsDashConditions()) return;
+            
+            PerformDash(StartOfRound.Instance.localPlayerController.gameplayCamera.transform.forward);
+        }
+
+        internal bool FulfillsDashConditions()
+        {
+            if (StartOfRound.Instance.localPlayerController == null)
+                return false;
+
+            if (!Config.Instance.Enabled.Value)
+                return false;
+
+            if (Config.Instance.ToSize.Value > 0f)
+            {
+                var playerSize = StartOfRound.Instance.localPlayerController.gameObject.transform.localScale.y;
+                if (playerSize < Config.Instance.FromSize.Value || playerSize > Config.Instance.ToSize.Value)
+                    return false;
+            }
+
+            if (StartOfRound.Instance.localPlayerController.sprintMeter < Config.Instance.StaminaCost.Value)
+                return false;
+
+            if (Time.time - lastDashedAt < Config.Instance.Cooldown.Value)
+                return false;
+
+            return true;
+        }
+
         internal void HandleDashInDirection(Direction direction)
         {
-            var currentTime = Time.time;
-            if (currentTime - lastDashedAt < Config.Instance.Cooldown.Value)
-                return;
-
-            var diff = currentTime - lastKeyChangeMap[direction];
-            lastKeyChangeMap[direction] = currentTime;
+            var diff = Time.time - lastKeyChangeMap[direction];
+            lastKeyChangeMap[direction] = Time.time;
             if (diff < Config.Instance.Precision.Value)
                 dashProgressMap[direction]++;
             else
@@ -65,19 +115,15 @@ namespace Dash
             }
 
             if (dashProgressMap[direction] >= 3)
+            {
                 PerformDash(direction);
+                dashProgressMap[direction] = 0;
+            }
         }
 
         internal void PerformDash(Direction direction)
         {
-            if (StartOfRound.Instance.localPlayerController == null)
-                return;
-
-            if (StartOfRound.Instance.localPlayerController.sprintMeter < Config.Instance.StaminaCost.Value)
-                return;
-
             Vector3 directionalVector = StartOfRound.Instance.localPlayerController.gameplayCamera.transform.forward;
-            directionalVector.y = 0f; // Don't throw me up
 
             switch(direction)
             {
@@ -94,11 +140,15 @@ namespace Dash
             }
 
             // Perform dash
-            DashRoutine.StartRoutine(StartOfRound.Instance.localPlayerController, directionalVector, Config.Instance.Power.Value, Config.Instance.Speed.Value);
+            PerformDash(directionalVector);
+        }
+
+        internal void PerformDash(Vector3 direction)
+        {
+            direction.y = 0f; // Don't throw us up
+            DashRoutine.StartRoutine(StartOfRound.Instance.localPlayerController, direction, Config.Instance.Power.Value, Config.Instance.Speed.Value);
             StartOfRound.Instance.localPlayerController.sprintMeter = Mathf.Clamp(StartOfRound.Instance.localPlayerController.sprintMeter - Config.Instance.StaminaCost.Value, 0f, 1f);
             lastDashedAt = Time.time;
-
-            dashProgressMap[direction] = 0;
         }
     }
 }

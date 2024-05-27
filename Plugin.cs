@@ -11,7 +11,7 @@ namespace Dash
     {
         public const string modGUID = "Niro.Dash";
         public const string modName = "Dash";
-        public const string modVersion = "1.1.0";
+        public const string modVersion = "1.1.1";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 

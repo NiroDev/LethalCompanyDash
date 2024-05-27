@@ -1,4 +1,7 @@
-### 1.1.0 ###
+### 1.1.1 ###
+- Removed "Cooldown" config option limitation
+
+## 1.1.0 ##
 - Added UseDashKey config to use a single key for dashing. Rejoining the lobby is required after changing
 - Added DashKeyKeyboard & DashKeyGamepad. Requires a restart after being set
 
@@ -11,5 +14,5 @@
 ### 1.0.1 ###
 - Updated github repo link
 
-### 1.0.0 ###
+## 1.0.0 ##
 - First version

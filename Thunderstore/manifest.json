@@ -1,6 +1,6 @@
 {
     "name": "Dash",
-    "version_number": "1.1.0",
+    "version_number": "1.1.1",
     "website_url": "https://github.com/NiroDev/LethalCompanyDash",
     "description": "A simple mod that lets you perform a dash!",
     "dependencies": [

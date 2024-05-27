@@ -43,7 +43,7 @@ namespace Dash
         {
             Enabled = Dash.Plugin.BepInExConfig().Bind("General", "Enabled", true, "Enable / Disable this mod (Syncing with host!)");
             StaminaCost = Dash.Plugin.BepInExConfig().Bind("General", "StaminaCost", 0.15f, new ConfigDescription("Stamina cost for one dash.", new AcceptableValueRange<float>(0f, 1f)));
-            Cooldown = Dash.Plugin.BepInExConfig().Bind("General", "Cooldown", 0.75f, new ConfigDescription("Cooldown in seconds.", new AcceptableValueRange<float>(0f, 2f)));
+            Cooldown = Dash.Plugin.BepInExConfig().Bind("General", "Cooldown", 0.75f, new ConfigDescription("Cooldown in seconds."));
             Precision = Dash.Plugin.BepInExConfig().Bind("General", "Precision", 0.2f, new ConfigDescription("Time in which a key of the double-tap has to follow to the previous one. Higher = Easier.", new AcceptableValueRange<float>(0.1f, 0.5f)));
             Power = Dash.Plugin.BepInExConfig().Bind("General", "Power", 15f, new ConfigDescription("The power of a dash.", new AcceptableValueRange<float>(1f, 100f)));
             Speed = Dash.Plugin.BepInExConfig().Bind("General", "Speed", 0.4f, new ConfigDescription("The duration / speed of the dash.", new AcceptableValueRange<float>(0.1f, 1f)));
